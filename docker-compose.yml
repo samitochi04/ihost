@@ -1,12 +1,26 @@
 version: '3.8'
 
 services:
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT:-3000}:80"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - .env
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
   backend:
     build: 
       context: ./backend
       dockerfile: Dockerfile
-    ports:
-      - "3001:3001"
     environment:
       - NODE_ENV=production
       - PORT=3001
@@ -18,23 +32,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-    networks:
-      - app-network
-
-  frontend:
-    build: 
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "3000:80"
-    environment:
-      - NODE_ENV=production
-    env_file:
-      - .env
-    restart: unless-stopped
-    depends_on:
-      backend:
-        condition: service_healthy
     networks:
       - app-network
 
