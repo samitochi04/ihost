@@ -1,6 +1,9 @@
 # Use the official Node.js 18 Alpine image
 FROM node:18-alpine
 
+# Install curl for health checks
+RUN apk add --no-cache curl
+
 # Set working directory
 WORKDIR /app
 
@@ -28,7 +31,7 @@ EXPOSE 3001
 
 # Add health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node healthcheck.js
+  CMD curl -f http://localhost:3001/api/health || exit 1
 
 # Start the application
 CMD ["npm", "start"]
