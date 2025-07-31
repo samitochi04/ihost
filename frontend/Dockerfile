@@ -9,8 +9,14 @@ COPY package*.json ./
 # Install ALL dependencies (including devDependencies for build)
 RUN npm ci
 
-# Copy source code
+# Copy index.html first (Vite entry point)
+COPY index.html ./
+
+# Copy source code and ensure index.html is present
 COPY . .
+
+# Verify index.html exists before build
+RUN ls -la && test -f index.html || (echo "index.html not found!" && exit 1)
 
 # Build the application
 RUN npm run build
