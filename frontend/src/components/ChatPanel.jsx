@@ -3,6 +3,7 @@ import { useDropzone } from 'react-dropzone'
 import { useDroppable } from '@dnd-kit/core'
 import { toast } from 'react-toastify'
 import { supabase } from '../lib/supabase'
+import { apiCall, apiConfig } from '../config/api'
 import { Send, X, Bot, User, Loader2, Paperclip, FileText, Image as ImageIcon, Video, Trash2, Upload } from 'lucide-react'
 
 const ChatPanel = ({ selectedDocument, selectedClassification, onClose, draggedFiles = [] }) => {
@@ -211,11 +212,8 @@ const ChatPanel = ({ selectedDocument, selectedClassification, onClose, draggedF
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), 15000) // 15 second timeout (backend has 10s)
 
-      const response = await fetch('/api/chat', {
+      const data = await apiCall('/api/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({
           message: userMessage,
           context: context,
@@ -231,12 +229,6 @@ const ChatPanel = ({ selectedDocument, selectedClassification, onClose, draggedF
 
       clearTimeout(timeoutId)
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.error || `Server error: ${response.status}`)
-      }
-
-      const data = await response.json()
       const aiMessage = {
         id: Date.now() + 1,
         sender: 'ai',
