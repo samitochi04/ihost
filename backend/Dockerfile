@@ -1,37 +1,19 @@
-# Use the official Node.js 18 Alpine image
+# Simple Node.js backend
 FROM node:18-alpine
 
-# Install curl for health checks
-RUN apk add --no-cache curl
-
-# Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json (if available)
+# Copy package files
 COPY package*.json ./
 
-# Install dependencies
+# Install production dependencies
 RUN npm ci --only=production
 
-# Copy the rest of the application
+# Copy source code
 COPY . .
 
-# Create a non-root user to run the app
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nodeuser -u 1001
-
-# Change ownership of the app directory to the nodeuser
-RUN chown -R nodeuser:nodejs /app
-
-# Switch to the non-root user
-USER nodeuser
-
-# Expose the port the app runs on
+# Expose port
 EXPOSE 3001
-
-# Add health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:3001/api/health || exit 1
 
 # Start the application
 CMD ["npm", "start"]

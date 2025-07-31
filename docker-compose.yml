@@ -2,41 +2,23 @@ version: '3.8'
 
 services:
   frontend:
-    build: 
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "${PORT:-3000}:80"
+    build: ./frontend
     environment:
       - NODE_ENV=production
+      - SERVICE_FQDN_FRONTEND
+      - VITE_BACKEND_URL=${SERVICE_URL_BACKEND}
     env_file:
       - .env
     restart: unless-stopped
     depends_on:
       - backend
-    networks:
-      - app-network
 
   backend:
-    build: 
-      context: ./backend
-      dockerfile: Dockerfile
-    expose:
-      - "3001"
+    build: ./backend
     environment:
       - NODE_ENV=production
       - PORT=3001
+      - SERVICE_FQDN_BACKEND
     env_file:
       - .env
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3001/api/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
