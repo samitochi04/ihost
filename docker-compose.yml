@@ -6,7 +6,7 @@ services:
     environment:
       - NODE_ENV=production
       - SERVICE_FQDN_FRONTEND_80
-      - VITE_BACKEND_URL=${SERVICE_URL_BACKEND}
+      - VITE_SERVICE_URL_BACKEND=${SERVICE_URL_BACKEND}
     env_file:
       - .env
     restart: unless-stopped
