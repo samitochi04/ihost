@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || '/api';
+const API_BASE_URL = import.meta.env.VITE_SERVICE_URL_BACKEND || '/api';
 
 export const apiConfig = {
   baseURL: API_BASE_URL,
