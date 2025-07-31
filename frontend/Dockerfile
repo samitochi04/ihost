@@ -18,6 +18,9 @@ RUN npm run build
 # Production stage - simple nginx
 FROM nginx:alpine
 
+# Copy nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 # Copy built files
 COPY --from=builder /app/dist /usr/share/nginx/html
 
